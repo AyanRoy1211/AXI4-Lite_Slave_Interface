@@ -32,18 +32,27 @@ The AXI4-Lite Slave manages data transfer through five independent channels:
 | :--- | :--- | :--- |
 | `S_AXI_ACLK` | Input | Global Clock Signal |
 | `S_AXI_ARESETN` | Input | Global Reset Signal (Active Low) |
+| `S_AXI_AWADDR` | Input | Write Address Bus |
 | `S_AXI_AWVALID` | Input | Write Address Valid |
 | `S_AXI_AWREADY` | Output | Write Address Ready |
+| `S_AXI_WDATA` | Input | Write Data Bus |
 | `S_AXI_WVALID` | Input | Write Data Valid |
 | `S_AXI_WREADY` | Output | Write Data Ready |
+| `S_AXI_BVALID` | Output | Write Response Valid |
+| `S_AXI_BREADY` | Input | Write Response Ready |
 | `S_AXI_BRESP` | Output | Write Response (OKAY, EXOKAY, SLVERR, DECERR) |
+| `S_AXI_ARADDR` | Input | Read Address Bus |
 | `S_AXI_ARVALID` | Input | Read Address Valid |
 | `S_AXI_ARREADY` | Output | Read Address Ready |
 | `S_AXI_RDATA` | Output | Read Data Bus |
+| `S_AXI_RVALID` | Output | Read Data Valid |
+| `S_AXI_RREADY` | Input | Read Data Ready |
 
 ### FSM State Diagram
 The slave logic transitions through states such as `IDLE`, `AD_DATA_WAIT` (Waiting for Address/Data), and `RESP_WAIT` (Waiting for Response Acknowledge) to ensure synchronization with the AXI Master.
 
+### FSM Design
+The core logic relies on a Moore Finite State Machine to handle the READY/VALID handshakes without deadlocks. The FSM is specifically designed to accept Write Address (`AWVALID`) and Write Data (`WVALID`) independently or simultaneously, ensuring standard protocol compliance and maximizing data throughput.
 
 
 ## 📉 Simulation & Verification
@@ -58,9 +67,6 @@ The design was verified using a custom **AXI Master BFM (Bus Functional Model)**
 *The screenshot below illustrates a successful Write transaction followed by a Read transaction, showing the precise timing of the READY/VALID handshakes:*
 
 ![AXI4 Waveform](axi_waveform.png) 
-*(Note: Upload your waveform screenshot from EDA Playground as axi_waveform.png)*
-
-
 
 ## 💻 Simulation Instructions
 To run the simulation using **Icarus Verilog**:
